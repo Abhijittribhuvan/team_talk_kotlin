@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "517298414346",
+    "firebase_url": "https://guard-talkie-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "guard-talkie",
+    "storage_bucket": "guard-talkie.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517298414346:android:8d34ec0c8d3d00985250f3",
+        "android_client_info": {
+          "package_name": "com.example.team_talk_kotlin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANPxuwWlFb98ofq_F5U0fDhcbNfGJYib0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517298414346:android:19373c858a47701f5250f3",
+        "android_client_info": {
+          "package_name": "com.toorant.talkie_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANPxuwWlFb98ofq_F5U0fDhcbNfGJYib0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
