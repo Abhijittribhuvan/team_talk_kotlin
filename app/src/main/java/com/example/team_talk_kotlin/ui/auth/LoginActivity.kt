@@ -15,7 +15,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.team_talk_kotlin.data.firebase.FirebaseUtil
-import com.example.team_talk_kotlin.ui.home.HomeScreen
+import com.example.team_talk_kotlin.ui.home.HomeScreenActivity
 import com.google.firebase.database.FirebaseDatabase
 //import com.google.firebase.messaging.FirebaseMessaging
 

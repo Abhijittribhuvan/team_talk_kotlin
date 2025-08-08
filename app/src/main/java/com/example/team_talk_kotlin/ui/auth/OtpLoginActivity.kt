@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.team_talk_kotlin.data.auth.AuthService
-import com.example.team_talk_kotlin.ui.home.HomeScreen
+import com.example.team_talk_kotlin.ui.home.HomeScreenActivity
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.launch
@@ -109,7 +109,7 @@ fun OtpLoginScreen() {
                                         .setValue(token)
                                 }
 
-                                val intent = Intent(context, HomeScreen::class.java)
+                                val intent = Intent(context, HomeScreenActivity::class.java)
                                 intent.putExtra("guard", HashMap(guard))
                                 context.startActivity(intent)
                             } else {

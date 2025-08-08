@@ -3,7 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.gms.google.services)
-}
+    id("com.google.devtools.ksp")}
+
 
 android {
     namespace = "com.example.team_talk_kotlin"
@@ -21,11 +22,13 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -51,6 +54,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.firebase.database)
+    implementation(libs.androidx.room.gradle.plugin)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -71,7 +75,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     // 📦 JSON support (optional, but useful)
-    implementation("org.json:json:20230227")
+//    implementation("org.json:json:20230227")
 
     implementation("com.jakewharton.threetenabp:threetenabp:1.4.5")
 
@@ -105,4 +109,29 @@ dependencies {
     implementation("com.google.firebase:firebase-database-ktx")
     implementation("com.google.firebase:firebase-messaging-ktx")
 
+    implementation("io.github.webrtc-sdk:android:125.6422.07")
+
+    implementation("androidx.compose.material:material-icons-extended:1.6.1") // or latest version
+
+    implementation("com.google.firebase:firebase-database-ktx:20.3.0")
+
+    implementation("io.livekit:livekit-android-compose-components:1.4.0")
+
+    implementation("io.livekit:livekit-android:2.18.3")
+
+    val room_version = "2.7.2"
+
+    ksp("androidx.room:room-compiler:$room_version")
+
+    implementation("androidx.room:room-ktx:${room_version}")
+
+    val livekit_version = "2.18.3"
+
+    implementation("io.livekit:livekit-android:$livekit_version")
+
+    // CameraX support with pinch to zoom, torch control, etc.
+    implementation("io.livekit:livekit-android-camerax:$livekit_version")
+
+    // Track processors, such as virtual background
+    implementation("io.livekit:livekit-android-track-processors:$livekit_version")
 }

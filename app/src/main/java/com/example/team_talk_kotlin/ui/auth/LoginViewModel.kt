@@ -1,10 +1,12 @@
 package com.example.team_talk_kotlin.ui.auth
 
 import android.content.Context
+import androidx.activity.compose.setContent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.team_talk_kotlin.data.auth.AuthService
-import com.example.team_talk_kotlin.ui.home.HomeScreen
+import com.example.team_talk_kotlin.data.model.Guard
+import com.example.team_talk_kotlin.ui.home.HomeScreenActivity
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,7 +44,14 @@ class LoginViewModel : ViewModel() {
                 val guard = firebaseService.loginGuard(phone, password)
                 if (guard != null) {
                     saveFcmToken(guard["id"].toString())
-                    HomeScreen.start(context, guard)
+//                    HomeScreen.start(context, guard)
+                    // Convert Map<String, Any> to Guard
+                    val guard = Guard(
+                        id = guard["id"] as? String ?: "",
+                        name = guard["name"] as? String ?: "Unknown",
+                        companyId = guard["company_id"] as? String ?: ""
+                    )
+                    HomeScreenActivity.start(context, guard)
                 }
             }
         }
@@ -62,7 +71,13 @@ class LoginViewModel : ViewModel() {
             if (guard != null) {
                 firebaseService.saveCredentials(context, phone, password)
                 saveFcmToken(guard["id"].toString())
-                HomeScreen.start(context, guard)
+//                HomeScreen.start(context, guard)
+                val guard = Guard(
+                    id = guard["id"] as? String ?: "",
+                    name = guard["name"] as? String ?: "Unknown",
+                    companyId = guard["company_id"] as? String ?: ""
+                )
+                HomeScreenActivity.start(context, guard)
             } else {
                 _state.value = _state.value.copy(error = "Invalid phone or password")
             }
