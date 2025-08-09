@@ -96,7 +96,8 @@ class HomeScreenActivity : ComponentActivity() {
 
         val isCurrentUserSpeaker = state.currentSpeakerId == viewModel.guard.id
         val isAnotherSpeaking = state.currentSpeakerId != null && !isCurrentUserSpeaker
-        val onlineCount = state.activeListeners.size + if (state.currentSpeakerId != null) 1 else 0
+//        val onlineCount = state.activeListeners.size + if (state.currentSpeakerId != null) 1 else 0
+        val onlineCount = state.activeListeners.size
         val totalMembers = state.groupMembers.size
 
         LaunchedEffect(state) {

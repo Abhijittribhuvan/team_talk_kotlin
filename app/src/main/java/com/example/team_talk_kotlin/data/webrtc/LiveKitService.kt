@@ -1,5 +1,6 @@
 package com.example.team_talk_kotlin.data.webrtc
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import io.livekit.android.ConnectOptions
@@ -14,7 +15,15 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import android.media.AudioManager
 import androidx.core.content.ContextCompat.getSystemService
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.GenericTypeIndicator
+import com.google.firebase.database.MutableData
+import com.google.firebase.database.Transaction
 import io.livekit.android.RoomOptions
+import io.livekit.android.annotations.Beta
+
 //import io.livekit.android.room.connect
 
 
@@ -29,7 +38,10 @@ class LiveKitService {
     private var audioTrack: LocalAudioTrack? = null
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var isSpeaker = false
+    private var uId : String = ""
 
+    @SuppressLint("SuspiciousIndentation")
+    @OptIn(Beta::class)
     fun connect(
         context: Context,
         token: String,
@@ -48,11 +60,6 @@ class LiveKitService {
                 val liveKit = LiveKit.create(context)
                 val options = ConnectOptions(audio = true)
 
-//                room = liveKit.connect(
-//                    url = "wss://team-talk-yg0tbukr.livekit.cloud",
-//                    token = token,
-//                    options = options
-//                )
 
                 val r: Room = LiveKit.create(
                     appContext = context,       // <— applicationContext is now in scope
@@ -65,15 +72,31 @@ class LiveKitService {
                     token   = token,
                     options = ConnectOptions(audio = true) // only audio
                 )
-
                 // 3) Save your room reference
+
+                if(!isSpeaker)
+                {
+                    r.setMicrophoneMute(true)
+                }
+
                 room = r
+
+                uId = userId
 
                 Log.e("<LivekitService.kt>","This is getting called when the start to speak done and Room is : ${room}")
 
-                room?.let { r ->
+                if (!isSpeaker) {
+                  val db= FirebaseDatabase.getInstance().getReference("listeners")
+                        .child(roomId)
+                        .child(userId)
+                        .setValue(true)
+
+                    Log.e("<!Livekit OnConnected!>","Entry is written in the Firebase Database and this is ${db}")
+                }
+
+                room?.let { rp ->
                     serviceScope.launch {
-                        r.events.collect { event ->
+                        rp.events.collect { event ->
                             handleRoomEvent(event)
                         }
                     }
@@ -85,7 +108,7 @@ class LiveKitService {
                 }
 
             } catch (e: Exception) {
-                Log.e("LiveKitService", "Connection error: $e and token is $token")
+                Log.e("<LiveKitService>", "Connection error: $e and token is $token")
                 onConnectionError?.invoke("Connection failed: ${e.message} and token is ${token}")
 
             }
@@ -95,11 +118,19 @@ class LiveKitService {
     private fun handleRoomEvent(event: RoomEvent) {
         when (event) {
             is RoomEvent.ParticipantConnected -> {
-                Log.d("LiveKitService", "Participant connected: ${event.participant.identity}")
+                Log.e("<<LiveKitService>>", "Participant connected: ${event.participant.identity}")
             }
 
             is RoomEvent.ParticipantDisconnected -> {
-                Log.d("LiveKitService", "Participant disconnected: ${event.participant.identity}")
+                Log.e("<<LiveKitService>>", "Participant disconnected: ${event.participant.identity}")
+
+                if (!isSpeaker) {
+                    FirebaseDatabase.getInstance().getReference("listeners")
+                        .child(room?.name ?: "")
+                        .child(""+event.participant.identity)
+                        .removeValue()
+                }
+
             }
 
             is RoomEvent.TrackSubscribed -> {
@@ -118,6 +149,15 @@ class LiveKitService {
                 onSpeakingStatusChanged?.invoke(false)
                 onRemoteAudioActive?.invoke(false)
                 onReconnecting?.invoke(false)
+
+                // 👇 Remove from Firebase
+                if (!isSpeaker) {
+                    FirebaseDatabase.getInstance().getReference("listeners")
+                        .child(room?.name ?: "")
+                        .child(uId+"")
+                        .removeValue()
+                }
+
             }
 
             is RoomEvent.Reconnecting -> onReconnecting?.invoke(true)
