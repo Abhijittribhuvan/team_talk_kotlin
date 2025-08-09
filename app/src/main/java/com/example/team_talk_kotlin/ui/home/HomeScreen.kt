@@ -74,6 +74,8 @@ class HomeScreenActivity : ComponentActivity() {
         }
     }
 
+
+
     override fun onDestroy() {
         Log.d("HomeScreenActivity", "Activity being destroyed")
         super.onDestroy()

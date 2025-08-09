@@ -21,6 +21,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
+
     <uses-feature
         android:name="android.hardware.microphone"
         android:required="true" />
@@ -40,6 +42,11 @@
         <activity android:name=".ui.auth.OtpLoginActivity" />
 
         <activity android:name=".ui.auth.ForgotPasswordActivity" />
+
+        <service
+            android:name=".data.webrtc.BackgroundVoiceService"
+            android:exported="false"
+            android:foregroundServiceType="microphone|mediaPlayback" />
 
         <service
             android:name=".data.webrtc.WebRTCService"

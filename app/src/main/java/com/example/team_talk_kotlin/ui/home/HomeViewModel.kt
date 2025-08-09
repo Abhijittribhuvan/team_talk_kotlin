@@ -1,6 +1,7 @@
 package com.example.team_talk_kotlin.ui.home
 
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.compose.ui.graphics.Color
@@ -43,6 +44,7 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
+import com.example.team_talk_kotlin.data.webrtc.BackgroundVoiceService
 
 data class HomeScreenState(
     val groups: List<Group> = emptyList(),
@@ -94,6 +96,12 @@ class HomeViewModel(val guard: Guard, private val context: Context) : ViewModel(
                     setupCallbacks(this)
                 }
             }
+
+//          Background Service and its related things
+            val intent = Intent(context, BackgroundVoiceService::class.java)
+            intent.putExtra("guard", guard) // Guard must be Serializable or Parcelable
+            ContextCompat.startForegroundService(context, intent)
+//
 
             loadData()
             startLicenseMonitoring()
@@ -239,7 +247,7 @@ class HomeViewModel(val guard: Guard, private val context: Context) : ViewModel(
                         viewModelScope.launch {
                             val speakerId = getCurrentSpeaker(group.id)
                             if (speakerId != null && speakerId != guard.id) {
-                                Log.d("<<AutoListener>>","This is working for the Speaker also, and the speaker id is ${speakerId} and guard id is ${guard.id}")
+                                Log.e("<<AutoListener>>","This is working for the Speaker also, and the speaker id is ${speakerId} and guard id is ${guard.id}")
                                 connectAsListener(group.id)
                             }
                         }

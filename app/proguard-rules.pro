@@ -44,3 +44,6 @@
     public static **[] values();
     public static ** valueOf(java.lang.String);
 }
+
+-keep class livekit.** { *; }
+-keep class org.webrtc.** { *; }

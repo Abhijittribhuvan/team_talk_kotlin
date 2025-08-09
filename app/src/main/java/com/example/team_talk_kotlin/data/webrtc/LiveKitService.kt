@@ -228,7 +228,7 @@ class LiveKitService {
         serviceScope.launch {
             delay(500)
             // DO NOT cancel serviceScope here
-            onSpeakingStatusChanged = null
+//            onSpeakingStatusChanged = null
             onRemoteAudioActive = null
             onConnectionError = null
             onReconnecting = null
