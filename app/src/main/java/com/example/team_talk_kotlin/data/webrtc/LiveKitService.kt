@@ -53,8 +53,9 @@ class LiveKitService {
                     options    = RoomOptions()             // default room options
                 )
 
+//                url     = "wss://team-talk-yg0tbukr.livekit.cloud",
                 r.connect(
-                    url     = "wss://team-talk-yg0tbukr.livekit.cloud",
+                    url     = "wss://livekit.devsamagri.com",
                     token   = token,
                     options = ConnectOptions(audio = true) // only audio
                 )
