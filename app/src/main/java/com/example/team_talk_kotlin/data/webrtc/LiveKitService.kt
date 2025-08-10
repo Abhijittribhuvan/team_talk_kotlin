@@ -12,20 +12,9 @@ import io.livekit.android.room.Room
 import io.livekit.android.room.track.LocalAudioTrack
 import io.livekit.android.room.track.Track
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
-import android.media.AudioManager
-import androidx.core.content.ContextCompat.getSystemService
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.GenericTypeIndicator
-import com.google.firebase.database.MutableData
-import com.google.firebase.database.Transaction
 import io.livekit.android.RoomOptions
 import io.livekit.android.annotations.Beta
-
-//import io.livekit.android.room.connect
-
 
 class LiveKitService {
     // Callbacks
@@ -39,7 +28,9 @@ class LiveKitService {
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var isSpeaker = false
     private var uId : String = ""
+    private var rId : String = ""
 
+//    Connect for the Listener and Speaker
     @SuppressLint("SuspiciousIndentation")
     @OptIn(Beta::class)
     fun connect(
@@ -57,22 +48,16 @@ class LiveKitService {
 
                 this@LiveKitService.isSpeaker = isSpeaker
 
-                val liveKit = LiveKit.create(context)
-                val options = ConnectOptions(audio = true)
-
-
                 val r: Room = LiveKit.create(
                     appContext = context,       // <— applicationContext is now in scope
                     options    = RoomOptions()             // default room options
                 )
 
-                // 2) ACTUALLY CONNECT via the suspend extension, which _mutates_ r
                 r.connect(
                     url     = "wss://team-talk-yg0tbukr.livekit.cloud",
                     token   = token,
                     options = ConnectOptions(audio = true) // only audio
                 )
-                // 3) Save your room reference
 
                 if(!isSpeaker)
                 {
@@ -82,6 +67,8 @@ class LiveKitService {
                 room = r
 
                 uId = userId
+
+                rId = roomId
 
                 Log.e("<LivekitService.kt>","This is getting called when the start to speak done and Room is : ${room}")
 
@@ -102,6 +89,7 @@ class LiveKitService {
                     }
                 }
 
+//                Publish the audio track if it is a speaker
                 if (isSpeaker) {
                     publishAudioTrack()
                     onSpeakingStatusChanged?.invoke(true)
@@ -115,6 +103,7 @@ class LiveKitService {
         }
     }
 
+//    Room Events Listeners for who is connected or who is disconnected
     private fun handleRoomEvent(event: RoomEvent) {
         when (event) {
             is RoomEvent.ParticipantConnected -> {
@@ -126,8 +115,8 @@ class LiveKitService {
 
                 if (!isSpeaker) {
                     FirebaseDatabase.getInstance().getReference("listeners")
-                        .child(room?.name ?: "")
-                        .child(""+event.participant.identity)
+                        .child(rId)
+                        .child(uId)
                         .removeValue()
                 }
 
@@ -153,8 +142,8 @@ class LiveKitService {
                 // 👇 Remove from Firebase
                 if (!isSpeaker) {
                     FirebaseDatabase.getInstance().getReference("listeners")
-                        .child(room?.name ?: "")
-                        .child(uId+"")
+                        .child(rId)
+                        .child(uId)
                         .removeValue()
                 }
 
@@ -172,6 +161,7 @@ class LiveKitService {
         }
     }
 
+//    Publishing the Audio track for listening purpose
     private fun publishAudioTrack() {
         serviceScope.launch {
             room?.let { r ->
@@ -197,6 +187,7 @@ class LiveKitService {
         }
     }
 
+//    Disconnecting from the Room
     fun disconnect() {
         serviceScope.launch {
             try {
@@ -224,6 +215,7 @@ class LiveKitService {
         }
     }
 
+//    Clearing all audio track and disconnecting from the Room
     fun dispose() {
         serviceScope.launch {
             delay(500)

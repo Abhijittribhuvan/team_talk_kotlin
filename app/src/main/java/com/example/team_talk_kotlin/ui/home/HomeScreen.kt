@@ -43,6 +43,7 @@ class HomeScreenActivity : ComponentActivity() {
         )
     }
 
+//    Binding the HomeViewModel to HomeScreen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -56,6 +57,7 @@ class HomeScreenActivity : ComponentActivity() {
         }
     }
 
+//    Request the Microphone Permission
     private fun requestMicrophonePermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), MICROPHONE_PERMISSION_REQUEST)
@@ -74,8 +76,7 @@ class HomeScreenActivity : ComponentActivity() {
         }
     }
 
-
-
+//    Activity is getting Destoyed
     override fun onDestroy() {
         Log.d("HomeScreenActivity", "Activity being destroyed")
         super.onDestroy()

@@ -46,6 +46,7 @@ import java.net.URL
 import java.net.URLEncoder
 import com.example.team_talk_kotlin.data.webrtc.BackgroundVoiceService
 
+// Data for the HomeScreen State
 data class HomeScreenState(
     val groups: List<Group> = emptyList(),
     val selectedGroup: Group? = null,
@@ -84,6 +85,7 @@ class HomeViewModel(val guard: Guard, private val context: Context) : ViewModel(
         }
     }
 
+//    Load the Company Data, Groups and Start the Foreground / Background Service
     private suspend fun initializeServices() = withContext(Dispatchers.IO) {
         try {
             Log.d("HomeViewModel", "Initializing services...")
@@ -121,6 +123,7 @@ class HomeViewModel(val guard: Guard, private val context: Context) : ViewModel(
         }
     }
 
+//    Set up the Call Backs for the State updation from the LiveKit
     private fun setupCallbacks(service: LiveKitService) {
         service.onSpeakingStatusChanged = { isActive ->
             updateState {
@@ -153,7 +156,7 @@ class HomeViewModel(val guard: Guard, private val context: Context) : ViewModel(
         }
     }
 
-//    Company Data Loading
+//    Load Company Details, Groups and Start the Periodic Check for listener
     private suspend fun loadData() {
         try {
             // Load company
@@ -291,6 +294,7 @@ class HomeViewModel(val guard: Guard, private val context: Context) : ViewModel(
         }
     }
 
+//    Observelisteners for the updation of the state Online/ Offline Users
     fun observeListeners(groupId: String) {
         val database = FirebaseDatabase.getInstance().getReference("listeners").child(groupId)
 
@@ -307,7 +311,7 @@ class HomeViewModel(val guard: Guard, private val context: Context) : ViewModel(
         })
     }
 
-
+//    Handles the Speak to Group and Stop to Speak
     fun handleTapToSpeak() {
         val currentState = state.value
         val group = currentState.selectedGroup ?: return
@@ -345,6 +349,7 @@ class HomeViewModel(val guard: Guard, private val context: Context) : ViewModel(
         }
     }
 
+//    Generate the token for Speaker and Connect to the Room
     private suspend fun startSpeaking(groupId: String) {
         // Check if someone else is speaking
         val currentSpeaker = getCurrentSpeaker(groupId)
@@ -383,6 +388,7 @@ class HomeViewModel(val guard: Guard, private val context: Context) : ViewModel(
         Log.d("StartSpeaking", "I am not working the tokengeneration function gets failes")
     }
 
+//    Generate the Token and Connect as a Listener
     private suspend fun connectAsListener(groupId: String) {
         liveKitService?.disconnect()
 
@@ -397,6 +403,7 @@ class HomeViewModel(val guard: Guard, private val context: Context) : ViewModel(
         Log.d("ConnectAsListener", "ConnectAsListener is getting called and token is $token")
     }
 
+//    Stops the Speaking
     private suspend fun stopSpeaking(groupId: String) {
         try{
             updateState {
@@ -423,7 +430,7 @@ class HomeViewModel(val guard: Guard, private val context: Context) : ViewModel(
 
     }
 
-
+//  Generates the token for the Speaker / Listener
     suspend fun generateToken(roomName: String, participantName: String, role: String): String = withContext(Dispatchers.IO) {
         val client = OkHttpClient()
 
@@ -467,18 +474,18 @@ class HomeViewModel(val guard: Guard, private val context: Context) : ViewModel(
         return@withContext jsonObject.getString("token")
     }
 
-
-
     fun clearError() {
         updateState { copy(connectionError = null) }
     }
 
+//    Starts the licence Monitoring for Company
     private fun startLicenseMonitoring() {
         viewModelScope.launch(Dispatchers.IO) {
             state.value.companyDetails?.let { validateLicense(it) }
         }
     }
 
+//    Validate the Company License and Display Message of the License Expired !!!!
     private fun validateLicense(company: Company) {
         val amcEnd = company.amcEnd ?: return
         val now = Date()
@@ -505,6 +512,7 @@ class HomeViewModel(val guard: Guard, private val context: Context) : ViewModel(
         }
     }
 
+//    Checks and return if the microphone permission is granted
     private fun isMicrophonePermissionGranted(): Boolean {
         return ContextCompat.checkSelfPermission(
             context,
@@ -529,6 +537,7 @@ class HomeViewModel(val guard: Guard, private val context: Context) : ViewModel(
     }
 }
 
+// It gets the Guard from the HomeScreen.kt
 class HomeViewModelFactory(private val guard: Guard, private val context: Context) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return HomeViewModel(guard, context) as T

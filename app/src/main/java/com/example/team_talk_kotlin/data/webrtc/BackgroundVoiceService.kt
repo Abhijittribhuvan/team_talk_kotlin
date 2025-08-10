@@ -45,6 +45,7 @@ class BackgroundVoiceService : Service() {
     private val lastConnectTime = mutableMapOf<String, Long>()
 
 
+//    Initializing Livekit
     override fun onCreate() {
         super.onCreate()
         try {
@@ -56,6 +57,7 @@ class BackgroundVoiceService : Service() {
         createNotificationChannel()
     }
 
+//    Preventing from connecting again and again immediately , wait 2 seconds for return connection
     private fun shouldConnectNow(groupId: String, minIntervalMs: Long = 2000L): Boolean {
         val now = System.currentTimeMillis()
         val last = lastConnectTime[groupId] ?: 0L
@@ -64,7 +66,7 @@ class BackgroundVoiceService : Service() {
         return true
     }
 
-
+//    When the Activity Starts it runs and checks the guard is exist save it and load it.
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val g = intent?.getSerializableExtra("guard") as? Guard
         if (g != null) {
@@ -76,12 +78,14 @@ class BackgroundVoiceService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
+//    Disconnect from the Room when activity is gets destroy
     override fun onDestroy() {
         super.onDestroy()
         serviceScope.cancel()
         liveKitService.disconnect()
     }
 
+//    Load Groups and start the Speaker check
     private suspend fun loadGroupsAndStart() {
         try {
             groups = GroupService.getGroupsForGuard(guard.id)
@@ -143,7 +147,6 @@ class BackgroundVoiceService : Service() {
         }
     }
 
-
     /** Firebase: Get the current speaker */
     private suspend fun getCurrentSpeaker(groupId: String): String? {
         return try {
@@ -186,7 +189,6 @@ class BackgroundVoiceService : Service() {
                 override fun onCancelled(error: DatabaseError) {}
             })
     }
-
 
     /** Audio setup + connect to LiveKit as listener */
     private suspend fun connectAsListener(groupId: String) {
@@ -246,7 +248,6 @@ class BackgroundVoiceService : Service() {
             isConnecting = false
         }
     }
-
 
     /** Audio focus request */
     private fun requestAudioFocus(): Boolean {
