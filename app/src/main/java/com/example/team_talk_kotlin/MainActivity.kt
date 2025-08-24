@@ -51,19 +51,13 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            // Call the function to check and request permissions
-            requireNeededPermissions {
-                // Logic to execute once permissions are granted
-                Toast.makeText(this@MainActivity, "Permissions granted!", Toast.LENGTH_SHORT).show()
-
-            }
-    
             setContent {
                 MaterialTheme {
                     LoginScreen()
                 }
             }
         }
+
     }
 
     fun ComponentActivity.requireNeededPermissions(onPermissionsGranted: (() -> Unit)? = null) {

@@ -33,7 +33,7 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="Teamtalk"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TeamTalkKotlin">
@@ -58,7 +58,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
+            android:label="Team Talk"
             android:theme="@style/Theme.TeamTalkKotlin">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

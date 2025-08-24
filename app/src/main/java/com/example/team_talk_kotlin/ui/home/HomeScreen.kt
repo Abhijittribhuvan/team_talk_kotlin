@@ -1,6 +1,8 @@
 package com.example.team_talk_kotlin.ui.home
 
 import android.Manifest
+import com.google.accompanist.flowlayout.FlowRow
+import androidx.compose.foundation.layout.Arrangement
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -92,6 +94,7 @@ class HomeScreenActivity : ComponentActivity() {
         }
     }
 
+    @OptIn(ExperimentalLayoutApi::class)
     @Composable
     fun HomeScreenContent(viewModel: HomeViewModel) {
         val state by viewModel.state.collectAsState()
@@ -181,12 +184,18 @@ class HomeScreenActivity : ComponentActivity() {
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text("Select Group:", fontWeight = FontWeight.Bold)
-                        LazyRow(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.fillMaxWidth()
+                        FlowRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            mainAxisSpacing = 8.dp,
+                            crossAxisSpacing = 8.dp
+
+//                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+//                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            items(state.groups) { group ->
-                                val isSelected = state.selectedGroup?.id == group.id
+//                            items(state.groups) { group ->
+                            state.groups.forEach { group ->
+
+                            val isSelected = state.selectedGroup?.id == group.id
                                 FilterChip(
                                     onClick = { viewModel.onGroupSelected(group) },
                                     label = { Text(group.name) },

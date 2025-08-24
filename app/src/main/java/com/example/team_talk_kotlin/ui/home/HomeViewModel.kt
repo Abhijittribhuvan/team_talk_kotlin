@@ -177,7 +177,7 @@ class HomeViewModel(val guard: Guard, private val context: Context) : ViewModel(
                     name = it["name"] as String,
                     guardIds = (it["guard_ids"] as? List<*>)?.mapNotNull { id -> id?.toString() } ?: emptyList()
                 )
-            }
+            }.sortedBy { it.name.lowercase() }
 
             updateState { copy(groups = groups) }
 

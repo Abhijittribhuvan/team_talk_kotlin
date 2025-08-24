@@ -119,6 +119,8 @@ dependencies {
 
     implementation("io.livekit:livekit-android:2.18.3")
 
+    implementation("com.google.accompanist:accompanist-flowlayout:0.28.0") // Use latest if available
+
     val room_version = "2.7.2"
 
     ksp("androidx.room:room-compiler:$room_version")
