@@ -12,19 +12,35 @@ import org.json.JSONObject
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import android.content.Context
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 
 
 object AuthService {
-    private const val phoneNumberId = "553313077858045"
-    private const val bearerId = "tqYr8PooE3HGtJ1LGR3fMP4sQUtcpd1rZARFUuwiSc"
-    private const val apiCompanyId = "676fbe2232cb3202"
-    private const val templateName = "gopi_pass_001"
+
+    private var phoneNumberId = "553313077858045"
+    private var bearerId = "tqYr8PooE3HGtJ1LGR3fMP4sQUtcpd1rZARFUuwiSc"
+    private var apiCompanyId = "676fbe2232cb3202"
+    private var templateName = "gopi_pass_001"
     private val client = OkHttpClient()
 
     suspend fun loginGuard(phone: String, password: String): Map<String, Any>? {
+
+        val waba = FirebaseUtil.db.child("whatsapp").get().await()
+        if(!waba.exists()) return null
+
+        val wb = waba.value as Map<*, *>
+        for ((key, value) in wb) {
+            val wba = (value as Map<*,*>).mapKeys { it.key.toString() }.mapValues { it.value?: "" }
+            phoneNumberId = wba["phoneNumberId"] as String
+            bearerId = wba["bearerId"] as String
+            apiCompanyId = wba["apiCompanyId"] as String
+            templateName = wba["templateName"] as String
+        }
+
         val snapshot = FirebaseUtil.db.child("guards").get().await()
         if (!snapshot.exists()) return null
 
