@@ -199,6 +199,7 @@ class LiveKitService {
                     audioTrack = null
                 }
 
+                audioTrack?.dispose()
                 // Step 2: Disconnect the room
                 room?.disconnect()
                 room = null

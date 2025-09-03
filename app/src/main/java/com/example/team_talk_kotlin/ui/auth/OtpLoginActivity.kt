@@ -3,6 +3,7 @@ package com.example.team_talk_kotlin.ui.auth
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
@@ -15,6 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.team_talk_kotlin.data.auth.AuthService
+import com.example.team_talk_kotlin.data.model.Guard
 import com.example.team_talk_kotlin.ui.home.HomeScreenActivity
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessaging
@@ -100,7 +102,7 @@ fun OtpLoginScreen() {
                                     putString("password", guard["password"] as? String ?: "")
                                     apply()
                                 }
-
+                                Log.d("{{{OTPActivity}}}","Phone No and Password :$phone and ${guard["password"]}")
                                 val guardId = guard["id"] as? String
                                 val token = FirebaseMessaging.getInstance().token.await()
                                 guardId?.let {
@@ -108,10 +110,13 @@ fun OtpLoginScreen() {
                                         .child("user_tokens/$it")
                                         .setValue(token)
                                 }
-
-                                val intent = Intent(context, HomeScreenActivity::class.java)
-                                intent.putExtra("guard", HashMap(guard))
-                                context.startActivity(intent)
+//
+                                val guard = Guard(
+                                    id = guard["id"] as? String ?: "",
+                                    name = guard["name"] as? String ?: "Unknown",
+                                    companyId = guard["company_id"] as? String ?: ""
+                                )
+                                HomeScreenActivity.start(context, guard)
                             } else {
                                 error = "Invalid or expired OTP"
                             }

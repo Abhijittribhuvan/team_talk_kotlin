@@ -375,7 +375,7 @@ class HomeViewModel(val guard: Guard, private val context: Context) : ViewModel(
 
         Log.d("StartSpeaking", "I am not working the after token generation function gets failes")
 
-        liveKitService?.disconnect()
+//        liveKitService?.disconnect()
 
         liveKitService?.connect(
             context = context,
